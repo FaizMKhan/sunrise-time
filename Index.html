@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sunrise Time</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background-color: #f0f0f0;
+        }
+        h1 {
+            margin-bottom: 20px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        #sunrise-time {
+            margin-top: 20px;
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Sunrise Time</h1>
+    <button onclick="getLocation()">Click to access your location</button>
+    <div id="sunrise-time"></div>
+
+    <script>
+        function getLocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(showSunriseTime);
+            } else {
+                alert("Geolocation is not supported by this browser.");
+            }
+        }
+
+        function showSunriseTime(position) {
+            const lat = position.coords.latitude;
+            const lon = position.coords.longitude;
+
+            fetch(`https://api.sunrise-sunset.org/json?lat=${lat}&lng=${lon}&formatted=0`)
+                .then(response => response.json())
+                .then(data => {
+                    const sunriseTime = new Date(data.results.sunrise);
+                    const localSunriseTime = sunriseTime.toLocaleTimeString();
+                    document.getElementById('sunrise-time').innerText = `Sunrise time: ${localSunriseTime}`;
+                })
+                .catch(error => {
+                    console.error('Error fetching sunrise time:', error);
+                    alert('Could not fetch sunrise time.');
+                });
+        }
+    </script>
+</body>
+</html>
